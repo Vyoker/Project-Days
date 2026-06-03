@@ -1,0 +1,195 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+body {
+    background: #0f0c09;
+    font-family: 'Courier New', 'Fira Code', monospace;
+    color: #f2e0c0;
+    padding: 8px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.game-container {
+    max-width: 500px;
+    width: 100%;
+    background: #1f1912e6;
+    border-radius: 32px;
+    border: 1px solid #c97e2c;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    overflow: hidden;
+}
+.header {
+    background: #1a130c;
+    padding: 8px 12px;
+    text-align: center;
+    border-bottom: 2px solid #b45f1b;
+}
+.header h1 {
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, #ffb347, #ff7e05);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.uuid-badge {
+    background: #2a2018;
+    border-radius: 40px;
+    padding: 3px 12px;
+    font-size: 0.65rem;
+    display: inline-block;
+    border-left: 3px solid #e67e22;
+    margin-top: 4px;
+}
+.stats-panel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 12px;
+    background: #1a140e;
+}
+.stat-card {
+    background: #2a211bb3;
+    border-radius: 20px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid #a56125;
+}
+.stat-value {
+    color: #ffbc6e;
+    font-size: 0.9rem;
+    margin-left: 4px;
+}
+.progress-mini {
+    flex: 1;
+    height: 8px;
+    background: #32271e;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 0 6px;
+}
+.fill-mini {
+    height: 100%;
+    background: linear-gradient(90deg, #e34d3a, #f0812f);
+    width: 0%;
+}
+.combat-area {
+    background: #1f1812;
+    margin: 8px 12px;
+    border-radius: 28px;
+    padding: 12px;
+    border: 1px solid #dc873a;
+}
+.zombie-card {
+    text-align: center;
+}
+.zombie-icon {
+    font-size: 2.8rem;
+}
+.attack-btn {
+    background: radial-gradient(circle at 30% 10%, #e67e22, #a35110);
+    border: none;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 60px;
+    margin-top: 8px;
+    cursor: pointer;
+    width: 80%;
+    box-shadow: 0 3px 0 #4e2a10;
+    color: #2f1d0c;
+}
+.attack-btn:active { transform: translateY(2px); }
+.alert-area {
+    background: #2b1f16;
+    margin-top: 10px;
+    padding: 6px;
+    border-radius: 40px;
+    font-size: 0.7rem;
+    text-align: center;
+    border-left: 6px solid #c97e2c;
+}
+.upgrades-panel {
+    padding: 8px 12px;
+}
+.upgrades-panel h3 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 8px;
+    border-bottom: 1px dashed #ca7a2c;
+}
+.upgrade-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.upgrade-card {
+    background: #251e16e0;
+    border-radius: 20px;
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 0.7rem;
+    border: 1px solid #be732e;
+}
+.upgrade-btn {
+    background: #6e4a27;
+    color: #ffe1aa;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 30px;
+    font-size: 0.65rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 4px;
+    width: 90%;
+}
+.upgrade-btn:active { transform: scale(0.96); }
+.action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    background: #1a130e;
+    padding: 10px 12px;
+    border-top: 1px solid #b45f1b;
+}
+.action-btn {
+    background: #332619;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 40px;
+    font-weight: bold;
+    font-size: 0.7rem;
+    color: #f7cf9f;
+    cursor: pointer;
+    min-width: 70px;
+}
+.reset { background: #4a2a1a; }
+.danger {
+    background: #632a1a;
+    animation: pulseRed 1s infinite;
+}
+@keyframes pulseRed {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; background: #b13c1a; }
+}
+.footer {
+    font-size: 0.6rem;
+    text-align: center;
+    background: #120c08;
+    padding: 6px;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

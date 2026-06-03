@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PROJECT DAYS - Zombie Survival Idle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="game-container">
+    <div class="header">
+        <h1>🧟 PROJECT DAYS 🧟</h1>
+        <div class="uuid-badge" id="uuidDisplay">ID: memuat...</div>
+    </div>
+
+    <div class="stats-panel">
+        <div class="stat-card"><span>💎 SCRAP</span><span id="scrapAmount" class="stat-value">0</span></div>
+        <div class="stat-card"><span>❤️ HP</span><div class="progress-mini"><div id="hpFillMini" class="fill-mini"></div></div><span id="hpText" class="stat-value">100/100</span></div>
+        <div class="stat-card"><span>⭐ LV</span><span id="survivorLevel" class="stat-value">1</span><span>XP</span><div class="progress-mini"><div id="xpFill" class="fill-mini"></div></div><span id="xpProgressTxt" class="stat-value">0/100</span></div>
+        <div class="stat-card"><span>⚔️ DMG</span><span id="playerDamage" class="stat-value">10</span><span>🔪 CRIT</span><span id="critInfo" class="stat-value">5%</span></div>
+        <div class="stat-card"><span>⚙️ S/SEC</span><span id="scrapPerSec" class="stat-value">0</span><span>🌊 WAVE</span><span id="waveCount" class="stat-value">1</span></div>
+    </div>
+
+    <div class="combat-area">
+        <div class="zombie-card">
+            <div class="zombie-icon">🧟‍♂️</div>
+            <div class="zombie-name">WALKER #<span id="zombieWave">1</span></div>
+            <div class="progress-mini" style="margin:6px 0"><div id="zombieHpFill" class="fill-mini" style="background:#6aab4a;"></div></div>
+            <div><span id="zombieHpText">0</span> / <span id="zombieMaxHp">0</span> HP</div>
+            <button id="manualAttackBtn" class="attack-btn">🔫 SERANG MANUAL</button>
+        </div>
+        <div class="alert-area" id="combatLog">⚔️ Klik serang atau idle DPS</div>
+    </div>
+
+    <div class="upgrades-panel">
+        <h3>🏚️ UPGRADE SHELTER</h3>
+        <div class="upgrade-grid" id="upgradeGrid"></div>
+    </div>
+
+    <div class="action-bar">
+        <button id="exportBtn" class="action-btn">📤 EXPORT</button>
+        <button id="importBtn" class="action-btn">📥 IMPORT</button>
+        <button id="healBtn" class="action-btn">💊 HEAL(25)</button>
+        <button id="reviveBtn" class="action-btn danger" style="display:none;">💀 REVIVE(100)</button>
+        <button id="resetGameBtn" class="action-btn reset">🔄 NEW GAME</button>
+    </div>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+    <div class="footer">⚡ IDLE DPS tiap detik | 🧟 Zombie attack 2dtk | 📀 Offline scrap</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
