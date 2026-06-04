@@ -1,8 +1,8 @@
 (function() {
-    // === NO TELEPON DEVELOPER (Ganti dengan nomor WA Business milikmu) ===
+    // === NO WHATSAPP DEVELOPER ===
     const DEVELOPER_WA = "6281991495276"; 
 
-    // === 1. UUID GENERATOR ===
+    // === 1. UUID SETUP ===
     let playerUUID = localStorage.getItem('projectDaysUUID');
     if (!playerUUID) {
         playerUUID = 'PD-' + Math.floor(100000 + Math.random() * 900000);
@@ -10,33 +10,36 @@
     }
     document.getElementById('uuidDisplay').innerText = 'ID: ' + playerUUID;
 
-    // === 2. STATE GLOBAL (Dua Jenis Scrap) ===
+    // === 2. INTI STATE GAME ===
     let state = {
-        scrap: 50,          // Teks Putih (Mudah didapat dari game)
-        goldScrap: 0,       // Teks Emas (Dari simulasi Top-up)
+        scrap: 50,          
+        goldScrap: 0,       
         level: 1, xp: 0, maxHp: 100, currentHp: 100, baseDamage: 12,
         dmgUpgrade: 0, hpUpgrade: 0, genUpgrade: 0, critUpgrade: 0,
         wave: 1, zombieCurrentHp: 0
     };
 
-    // Variabel bantu transaksi top-up aktif
     let activeTransaction = { amount: 0, price: 0 };
 
-    // === 3. BALANCING FORMULA (Zombie Tidak OP, Scrap Melimpah) ===
+    // === 3. DAFTAR MANAGEMENT GAMBAR ZOMBIE DINAMIS (ASSETS BOMBIES SYSTEM) ===
+    // Kamu tinggal menambah daftar file gambar baru di folder assets/ lalu daftarkan di sini:
+    const zombieAssets = {
+        normal: "assets/zombie_normal.png",
+        boss: "assets/zombie_boss.png" // Contoh jika nanti wave kelipatan 10 ada boss
+    };
+
+    // === 4. KALKULASI BALANCING ===
     function getUpgradeCost(base, lvl) { return base + (lvl * 15); }
     function calcTotalDamage() { return state.baseDamage + (state.dmgUpgrade * 6); }
     function calcCritChance() { return Math.min(0.05 + (state.critUpgrade * 0.03), 0.75); }
-    function calcScrapPerSec() { return state.genUpgrade * 2; } // Generator diperkuat
+    function calcScrapPerSec() { return state.genUpgrade * 2; } 
     function calcMaxHp() { return 100 + (state.hpUpgrade * 15); }
     
-    // Formula Zombie dibikin ramah pemain (pertumbuhan landai)
     function getZombieMaxHp() { return 30 + (state.wave * 8); }
     function zombieDamage() { return Math.max(3, 2 + Math.floor(state.wave * 0.6)); }
-    
-    // Hadiah Scrap Putih dibuat sangat mudah didapat
-    function getScrapReward() { return 50 + (state.wave * 12); }
+    function getScrapReward() { return 50 + (state.wave * 12); } 
 
-    // === 4. UI UPDATE ===
+    // === 5. SINKRONISASI UPDATE UI ===
     function updateUI() {
         let maxHp = calcMaxHp();
         let hpPercent = (state.currentHp / maxHp) * 100;
@@ -52,10 +55,8 @@
         document.getElementById('critInfo').innerHTML = Math.floor(calcCritChance()*100) + '%';
         document.getElementById('scrapPerSec').innerText = calcScrapPerSec();
         
-        // Update dua mata uang berbeda
         document.getElementById('scrapAmount').innerText = Math.floor(state.scrap);
         document.getElementById('goldAmount').innerText = Math.floor(state.goldScrap);
-        
         document.getElementById('waveCount').innerText = state.wave;
         
         let maxZombie = getZombieMaxHp();
@@ -64,6 +65,17 @@
         document.getElementById('zombieHpText').innerText = Math.max(0, Math.floor(state.zombieCurrentHp));
         document.getElementById('zombieMaxHp').innerText = Math.floor(maxZombie);
         document.getElementById('zombieWave').innerText = state.wave;
+
+        // KONTROL GAMBAR ZOMBIE DINAMIS BERDASARKAN ASSETS/
+        let imgElement = document.getElementById('zombieIcon');
+        if (imgElement) {
+            // Setiap wave kelipatan 10 akan otomatis berubah gambar menjadi zombie boss di folder assets
+            if (state.wave % 10 === 0) {
+                imgElement.src = zombieAssets.boss;
+            } else {
+                imgElement.src = zombieAssets.normal;
+            }
+        }
         
         renderUpgrades();
     }
@@ -72,10 +84,10 @@
         const grid = document.getElementById('upgradeGrid');
         if (!grid) return;
         const upgrades = [
-            { id: 'dmg', name: '💪 POWER STRIKE', desc: `DMG +${state.dmgUpgrade*6}`, cost: getUpgradeCost(30, state.dmgUpgrade) },
-            { id: 'hp', name: '🛡️ FORTITUDE', desc: `HP +${state.hpUpgrade*15}`, cost: getUpgradeCost(35, state.hpUpgrade) },
-            { id: 'gen', name: '📡 DRONE', desc: `📀/S +${state.genUpgrade*2}`, cost: getUpgradeCost(25, state.genUpgrade) },
-            { id: 'crit', name: '🎯 SHARP EYE', desc: `CRIT +${state.critUpgrade*3}%`, cost: getUpgradeCost(40, state.critUpgrade) }
+            { id: 'dmg', name: '💪 POWER STRIKE', cost: getUpgradeCost(30, state.dmgUpgrade) },
+            { id: 'hp', name: '🛡️ FORTITUDE', cost: getUpgradeCost(35, state.hpUpgrade) },
+            { id: 'gen', name: '📡 DRONE', cost: getUpgradeCost(25, state.genUpgrade) },
+            { id: 'crit', name: '🎯 SHARP EYE', cost: getUpgradeCost(40, state.critUpgrade) }
         ];
         
         grid.innerHTML = '';
@@ -127,7 +139,7 @@
         }
     }
 
-    // === 5. GAMEPLAY MEKANISME (BOMBIES TELEGRAM CLICKER STYLE) ===
+    // === 6. COMBAT GAMEPLAY LOOP ===
     function dealDamage(dmg, isManual = false) {
         if (state.currentHp <= 0) { addLog("💀 Kamu tumbang! Tekan Revive."); return false; }
         if (state.zombieCurrentHp <= 0) { spawnZombie(); return false; }
@@ -139,17 +151,15 @@
         state.zombieCurrentHp -= finalDmg;
         
         if (isManual) {
-            // Berikan bonus scrap kecil setiap kali melakukan Tap manual (Bombies Style)
-            state.scrap += Math.random() > 0.5 ? 2 : 1;
+            state.scrap += Math.random() > 0.5 ? 2 : 1; 
         }
 
         addLog(`${isManual ? "💥 TAP" : "⚡ AUTO"} ${finalDmg}${isCrit ? " CRIT!" : ""} dmg!`);
         
         if (state.zombieCurrentHp <= 0) {
             let scrapReward = getScrapReward();
-            let xpReward = 25;
             state.scrap += scrapReward;
-            state.xp += xpReward;
+            state.xp += 25;
             addLog(`✅ Zombie Hancur! +${scrapReward} Scrap ⚪`);
             
             while (state.xp >= 100) {
@@ -157,7 +167,7 @@
                 state.xp -= 100;
                 state.baseDamage += 4;
                 state.currentHp = calcMaxHp();
-                addLog(`🎉 LEVEL UP! Level ${state.level} | HP di-refresh penuh.`);
+                addLog(`🎉 LEVEL UP! Level ${state.level}`);
             }
             state.wave++;
             spawnZombie();
@@ -178,12 +188,11 @@
         updateUI();
         
         if (state.currentHp <= 0) {
-            addLog(`💀 KALAH! Butuh 5 Scrap ⚪ untuk mengulang.`);
+            addLog(`💀 KALAH! Bayar pinalti 5 Scrap ⚪ untuk mengulang.`);
             disableButtons(true);
         }
     }
 
-    // Mekanisme Pinalti Kalah Landai (Hanya bayar 5 Scrap Putih, HP balik 100%)
     function revive() {
         if (state.scrap >= 5) {
             state.scrap -= 5;
@@ -194,7 +203,7 @@
             addLog(`💊 Revive berhasil! HP kembali penuh.`);
             saveGame();
         } else { 
-            addLog(`❌ Scrap tidak cukup! Gunakan tombol RESET / NEW GAME jika macet.`); 
+            addLog(`❌ Scrap tidak cukup!`); 
         }
     }
 
@@ -230,7 +239,7 @@
 
     function initNewGame() {
         state = {
-            scrap: 100, goldScrap: state.goldScrap, // Gold scrap dipertahankan saat reset biasa
+            scrap: 100, goldScrap: state.goldScrap, 
             level: 1, xp: 0, maxHp: 100, currentHp: 100, baseDamage: 12,
             dmgUpgrade: 0, hpUpgrade: 0, genUpgrade: 0, critUpgrade: 0,
             wave: 1, zombieCurrentHp: 0
@@ -241,7 +250,7 @@
         saveGame();
     }
 
-    // === 6. GAME LOOPS & STORAGE ===
+    // === 7. INTERVAL ENGINE ===
     let idleInterval, zombieInterval;
     function startIntervals() {
         if (idleInterval) clearInterval(idleInterval);
@@ -259,7 +268,7 @@
 
         zombieInterval = setInterval(() => {
             if (state.currentHp > 0 && state.zombieCurrentHp > 0) zombieAttackPlayer();
-        }, 2200); // Ritme serang zombie diperlambat sedikit agar tidak terlalu OP
+        }, 2200);
     }
 
     function saveGame() { localStorage.setItem('projectDaysState', JSON.stringify(state)); }
@@ -277,13 +286,12 @@
         updateUI();
     }
 
-    // === 7. SIMULASI WEB TOP-UP VIA WA BUSINESS GATEWAY ===
+    // === 8. WA BUSINESS STORE GATEWAY FLOW ===
     function initTopupSystem() {
         const modal = document.getElementById('topupModal');
         const openBtn = document.getElementById('topupModalBtn');
         const closeBtn = document.getElementById('closeModalBtn');
         const qrSection = document.getElementById('qrSection');
-        const qrImage = document.getElementById('qrImage');
         const payDetail = document.getElementById('paymentDetail');
         const sendWaBtn = document.getElementById('sendWaBtn');
 
@@ -293,7 +301,6 @@
             qrSection.style.display = 'none';
         };
 
-        // Ketika salah satu opsi harga top-up ditekan
         document.querySelectorAll('.pay-option-btn').forEach(btn => {
             btn.onclick = (e) => {
                 let amount = e.currentTarget.getAttribute('data-amount');
@@ -302,26 +309,22 @@
                 activeTransaction.amount = amount;
                 activeTransaction.price = price;
 
-                // Memunculkan dummy QRIS menggunakan API QR generator publik
-                qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PROJ-DAYS-TOPUP-${playerUUID}-${amount}`;
                 payDetail.innerText = `TOTAL TAGIHAN: Rp ${parseInt(price).toLocaleString('id-ID')}`;
-                qrSection.style.display = 'block';
+                qrSection.style.display = 'block'; 
             };
         });
 
-        // Mengirim pesan template verifikasi otomatis langsung ke WhatsApp Developer
         sendWaBtn.onclick = () => {
-            let message = `Halo Developer Project Days,\n\nSaya ingin mengonfirmasi Top Up Gold Scrap.\n\n` +
+            let message = `Halo Developer Project Days,\n\nSaya ingin mengonfirmasi Pembayaran Top Up:\n\n` +
                           `▪️ ID Player: ${playerUUID}\n` +
-                          `▪️ Nominal: ${activeTransaction.amount} GOLD SCRAP\n` +
-                          `▪️ Total Bayar: Rp ${parseInt(activeTransaction.price).toLocaleString('id-ID')}\n` +
-                          `▪️ Status: Sudah transfer via QRIS\n\nMohon segera dikonfirmasi & ditambahkan ke akun saya. Terima kasih!`;
+                          `▪️ Item: ${activeTransaction.amount} GOLD SCRAP\n` +
+                          `▪️ Nominal: Rp ${parseInt(activeTransaction.price).toLocaleString('id-ID')}\n` +
+                          `▪️ Metode: QRIS Afistore\n\nSaya sudah melakukan transfer. Silakan lakukan konfirmasi manual via dashboard WhatsApp Business Anda.`;
             
             let url = `https://api.whatsapp.com/send?phone=${DEVELOPER_WA}&text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
 
-            // Simulasi instan di sisi klien (seolah-olah developer langsung mengonfirmasi via WA)
-            alert("Permintaan konfirmasi dikirim ke WhatsApp Developer! Sebagai simulasi testing, Gold Scrap ditambahkan otomatis.");
+            alert("Sistem dialihkan ke WhatsApp! Untuk keperluan pengujian lokal, Gold Scrap ditambahkan secara otomatis.");
             state.goldScrap += parseInt(activeTransaction.amount);
             modal.classList.remove('active');
             qrSection.style.display = 'none';
@@ -330,23 +333,15 @@
         };
     }
 
-    // === 8. BIND EVENTS & EXECUTION ===
+    // === 9. ACTION EVENT BINDINGS ===
     function bindEvents() {
-        // Tombol Serang Utama
-        document.getElementById('manualAttackBtn').onclick = () => {
-            dealDamage(calcTotalDamage(), true);
-        };
-
-        // FITUR BOMBIES: Klik langsung pada emoji zombie juga memicu serangan kilat!
-        document.getElementById('zombieIcon').onclick = () => {
-            dealDamage(calcTotalDamage(), true);
-        };
+        document.getElementById('manualAttackBtn').onclick = () => dealDamage(calcTotalDamage(), true);
+        document.getElementById('zombieIcon').onclick = () => dealDamage(calcTotalDamage(), true);
 
         document.getElementById('healBtn').onclick = heal;
         document.getElementById('reviveBtn').onclick = revive;
         document.getElementById('resetGameBtn').onclick = resetGame;
         
-        // Fitur ekspor berkas data
         document.getElementById('exportBtn').onclick = () => {
             let blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
             let url = URL.createObjectURL(blob);
@@ -370,15 +365,14 @@
                     disableButtons(state.currentHp <= 0);
                     updateUI();
                     saveGame();
-                    addLog("✅ Data berhasil di-import!");
-                } catch (err) { alert("File rusak atau tidak valid"); }
+                    addLog("✅ Data berhasil dimuat!");
+                } catch (err) { alert("File rusak!"); }
             };
             reader.readAsText(file);
             importFile.value = '';
         };
     }
 
-    // Menjalankan semua modul
     loadGame();
     bindEvents();
     initTopupSystem();
