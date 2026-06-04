@@ -6,6 +6,10 @@
 }
 body {
     background: #0f0c09;
+    /* JIKA NANTI ADA BACKGROUND UTAMA, TINGGAL AKTIFKAN BARIS DI BAWAH INI: */
+    /* background-image: url('assets/main-bg.jpg'); */
+    /* background-size: cover; */
+    /* background-position: center; */
     font-family: 'Courier New', 'Fira Code', monospace;
     color: #f2e0c0;
     padding: 8px;
@@ -18,6 +22,8 @@ body {
     max-width: 500px;
     width: 100%;
     background: #1f1912e6;
+    /* JIKA NANTI ADA BACKGROUND UI CONTAINER: */
+    /* background-image: url('assets/ui-panel-bg.png'); */
     border-radius: 32px;
     border: 1px solid #c97e2c;
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
@@ -99,15 +105,21 @@ body {
 .zombie-card {
     text-align: center;
 }
+
+/* DIOPTIMALKAN UNTUK GAMBAR ASSET AGAR TIDAK PECAH/MERUSAK UI */
 .zombie-icon {
-    font-size: 3.5rem;
-    margin: 5px 0;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin: 5px auto;
+    display: block;
     transition: transform 0.05s ease;
     cursor: pointer;
 }
 .zombie-icon:active {
     transform: scale(0.85) rotate(5deg);
 }
+
 .attack-btn {
     background: radial-gradient(circle at 30% 10%, #e67e22, #a35110);
     border: none;
@@ -213,7 +225,7 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* MODAL STYLES */
+/* MODAL INTERFACE */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
