@@ -319,19 +319,23 @@
                           `▪️ ID Player: ${playerUUID}\n` +
                           `▪️ Item: ${activeTransaction.amount} GOLD SCRAP\n` +
                           `▪️ Nominal: Rp ${parseInt(activeTransaction.price).toLocaleString('id-ID')}\n` +
-                          `▪️ Metode: QRIS Afistore\n\nSaya sudah melakukan transfer. Silakan lakukan konfirmasi manual via dashboard WhatsApp Business Anda.`;
-            
-            let url = `https://api.whatsapp.com/send?phone=${DEVELOPER_WA}&text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+                          `▪️ Metode: QRIS Afistore\n\nSaya sudah melakukan transfer. Silakan lakukan konfirmasi.`;
 
-            alert("Sistem dialihkan ke WhatsApp! Untuk keperluan pengujian lokal, Gold Scrap ditambahkan secara otomatis.");
+            // Gunakan wa.me (resmi & aman)
+            let waNumber = DEVELOPER_WA.replace(/[^0-9]/g, ''); // pastikan hanya angka
+            let url = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+    
+            // Buka dengan cara yang lebih aman untuk WebView
+            window.open(url, '_blank') || (location.href = url);
+    
+            // Alert simulasi (jika hanya testing, gold tetap ditambah)
+            alert("Pembayaran simulasi: Gold Scrap ditambahkan secara otomatis.");
             state.goldScrap += parseInt(activeTransaction.amount);
             modal.classList.remove('active');
             qrSection.style.display = 'none';
             updateUI();
             saveGame();
-        };
-    }
+      };
 
     // === 9. ACTION EVENT BINDINGS ===
     function bindEvents() {
